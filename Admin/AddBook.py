@@ -3,7 +3,7 @@ from tkinter import ttk
 
 from tkinter import Menu
 from CenterScreen import center_screen_geometry
-import DatabaseClss.BookDB.db_books as bookdatabase
+import DatabaseClss.BookDB.db_books as bdb
 
 
 def Page():
@@ -60,8 +60,7 @@ def Page():
                            'True Crime')
 
     def save_handler():
-        bookdatabase.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), cmb_dtype.get())
-
+        bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), cmb_dtype.get())
 
     def cancel_handler():
         pass

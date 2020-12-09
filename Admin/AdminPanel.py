@@ -3,8 +3,8 @@ from tkinter import ttk
 
 from tkinter import Menu
 from CenterScreen import center_screen_geometry
-import DatabaseClss.BookDB.db_books as bookdatabase
-from Admin.AddBook import Page
+import DatabaseClss.BookDB.db_books as bdb
+from Admin import AddBook as AB, GiveBook as GB, TakeBook as TB
 
 
 class tkinterApp(tk.Tk):
@@ -26,96 +26,89 @@ class tkinterApp(tk.Tk):
 
         self.frames = {}
 
-        for F in (AdminPanelPage, Frame1, Frame2):
+        for F in (AdminPanelFrame, Frame1, Frame2):  # THE FRAME NAME SHOULD BE ADDED IN THIS LINE /1
             frame = F(container, self)
             self.frames[F] = frame
 
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(AdminPanelPage)
+        self.show_frame(AdminPanelFrame)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
 
 
-class AdminPanelPage(tk.Frame):
+# region Frames section
+# Frames let you to change the frame and this does not open a new window
+class AdminPanelFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
         menu_bar = Menu(controller)
         controller.config(menu=menu_bar)
 
-        # Creating a menu and add menu items
+        # CREATING A MENU
         file_menu = Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Add", command=AddBookPage)
         file_menu.add_command(label="Edit", command=EditBookPage)
+        # FRAMES WILL BE PLACED LIKE THE EXAMPLES, THE OTHERS ARE PAGES /2
+        # file_menu.add_command(label="Take the book", command=lambda: controller.show_frame(Frame1)) #EXAMPLE FRAME
+        # file_menu.add_command(label="Give a book", command=lambda: controller.show_frame(Frame2)) #EXAMPLE FRAME
 
         order_menu = Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="Order", menu=order_menu)
-        # file_menu.add_command(label="Take the book", command=lambda: controller.show_frame(Frame1))
-        # file_menu.add_command(label="Give a book", command=lambda: controller.show_frame(Frame2))
         order_menu.add_command(label="Take", command=TakeBookPage)
         order_menu.add_command(label="Give", command=GiveBookPage)
 
-        # creating database
-        if not bookdatabase.check_database():  # Checks if there is a database, if not then creates a new one
-            bookdatabase.create_database()
+        # CHECKS IF THERE IS A DATABASE FILE
+        if not bdb.check_database():
+            bdb.create_database()
 
         refresh_list()
-
-
-def refresh_list():
-    print(bookdatabase.list_books())
-
-
-def TakeBookPage():
-    winTake = tk.Toplevel()
-    winTake.title("Take the book")
-    winTake.geometry(center_screen_geometry(screen_width=winTake.winfo_screenwidth() + 100,
-                                            screen_height=winTake.winfo_screenheight(),
-                                            window_width=800,
-                                            window_height=600))
-    winTake.resizable(False, False)
-    winTake.grab_set()
-    label = ttk.Label(winTake, text="Take the book")
-    label.grid(row=0, column=4, padx=10, pady=10)
-
-
-def GiveBookPage():
-    winGive = tk.Toplevel()
-    winGive.title("Give a book")
-    winGive.geometry(center_screen_geometry(screen_width=winGive.winfo_screenwidth() + 100,
-                                            screen_height=winGive.winfo_screenheight(),
-                                            window_width=800,
-                                            window_height=600))
-    winGive.resizable(False, False)
-    winGive.grab_set()
-    label = ttk.Label(winGive, text="Give a book")
-    label.grid(row=0, column=4, padx=10, pady=10)
-
-
-def AddBookPage():
-    Page()
-
-
-def EditBookPage():
-    pass
 
 
 class Frame1(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Take the book")
+        label = ttk.Label(self, text="Take the book") # example kodes
         label.grid(row=0, column=4, padx=10, pady=10)
 
 
 class Frame2(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Give a book")
+        label = ttk.Label(self, text="Give a book") # example kodes
         label.grid(row=0, column=4, padx=10, pady=10)
+
+
+# endregion
+
+
+# region Pages section
+# Pages let you to start a new window
+def TakeBookPage():
+    TB.Page()
+
+
+def GiveBookPage():
+    GB.Page()
+
+
+def AddBookPage():
+    AB.Page()
+
+
+def EditBookPage():
+    pass
+
+
+# endregion
+
+
+def refresh_list():
+    print(bdb.list_books())
 
 
 app = tkinterApp()
