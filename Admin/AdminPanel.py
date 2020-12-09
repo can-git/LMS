@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
+
 from tkinter import Menu
-from centerscreen import center_screen_geometry
+from CenterScreen import center_screen_geometry
+import DatabaseClss.BookDB.db_books as bookdatabase
+from Admin.AddBook import Page
 
 
 class tkinterApp(tk.Tk):
@@ -56,11 +59,21 @@ class AdminPanelPage(tk.Frame):
         order_menu.add_command(label="Take", command=TakeBookPage)
         order_menu.add_command(label="Give", command=GiveBookPage)
 
+        # creating database
+        if not bookdatabase.check_database():  # Checks if there is a database, if not then creates a new one
+            bookdatabase.create_database()
+
+        refresh_list()
+
+
+def refresh_list():
+    print(bookdatabase.list_books())
+
 
 def TakeBookPage():
     winTake = tk.Toplevel()
     winTake.title("Take the book")
-    winTake.geometry(center_screen_geometry(screen_width=winTake.winfo_screenwidth()+100,
+    winTake.geometry(center_screen_geometry(screen_width=winTake.winfo_screenwidth() + 100,
                                             screen_height=winTake.winfo_screenheight(),
                                             window_width=800,
                                             window_height=600))
@@ -73,7 +86,7 @@ def TakeBookPage():
 def GiveBookPage():
     winGive = tk.Toplevel()
     winGive.title("Give a book")
-    winGive.geometry(center_screen_geometry(screen_width=winGive.winfo_screenwidth()+100,
+    winGive.geometry(center_screen_geometry(screen_width=winGive.winfo_screenwidth() + 100,
                                             screen_height=winGive.winfo_screenheight(),
                                             window_width=800,
                                             window_height=600))
@@ -84,7 +97,7 @@ def GiveBookPage():
 
 
 def AddBookPage():
-    pass
+    Page()
 
 
 def EditBookPage():
