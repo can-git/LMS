@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from tkinter import Menu
-from CenterScreen import center_screen_geometry
-import DatabaseClss.BookDB.db_books as bdb
+import Database.BookDB.db_books as bdb
+from pubsub import pub
 
 
 def Page():
@@ -63,7 +62,7 @@ def Page():
         bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), cmb_dtype.get())
 
     def cancel_handler():
-        pass
+        winAdd.destroy()
 
     ttk.Button(container, text="Cancel", command=cancel_handler).grid(column=0, row=4, padx=5, pady=5, sticky=tk.E)
     ttk.Button(container, text="Save", command=save_handler).grid(column=1, row=4, padx=5, pady=5, sticky=tk.E)

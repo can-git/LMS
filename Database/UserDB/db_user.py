@@ -1,15 +1,20 @@
+import os
 import sqlite3
 from tkinter import messagebox as msg
-import DatabaseClss.Queries as q
+from Database import Queries as q
+
+PATH = q.PATH
 
 
 def check_database():
-    conn = sqlite3.connect(q.BOOKPATH)
+    conn = sqlite3.connect(os.path.realpath(PATH))
     cur = conn.cursor()
     try:
-        cur.execute(q.CHECK)
+        cur.execute(q.CHECKUSERSTABLE)
         if cur.fetchone()[0] == 1:
             return True
+        else:
+            return False
     except Exception as e:
         msg.showinfo("Error", "Error:\n" + str(e))
         return False
@@ -19,10 +24,10 @@ def check_database():
 
 
 def create_database():
-    conn = sqlite3.connect(q.BOOKPATH)
+    conn = sqlite3.connect(PATH)
     cur = conn.cursor()
     try:
-        cur.execute(q.CREATE)
+        cur.execute(q.CREATEUSERTABLE)
         conn.commit()
 
     except Exception as e:
@@ -31,12 +36,12 @@ def create_database():
         conn.close()
 
 
-def list_books():
-    conn = sqlite3.connect(q.BOOKPATH)
+def list_users():
+    conn = sqlite3.connect(PATH)
     cur = conn.cursor()
     list = []
     try:
-        cur.execute(q.SELECT)
+        cur.execute(q.SELECTUSERS)
         list = cur.fetchall()
         conn.commit()
 
@@ -47,19 +52,17 @@ def list_books():
     return list
 
 
-def insert_book(bname, aname, cdate, dtype):
-    conn = sqlite3.connect(q.BOOKPATH)
+def insert_user(uname, usurname, cdate):
+    conn = sqlite3.connect(PATH)
     cur = conn.cursor()
     try:
-        cur.execute(q.INSERT,
-                    {"bname": bname,
-                     "aname": aname,
-                     "cdate": cdate,
-                     "dtype": dtype,
-                     "state": True
+        cur.execute(q.INSERTUSER,
+                    {"uname": uname,
+                     "usurname": usurname,
+                     "cdate": cdate
                      })
         conn.commit()
-        msg.showinfo("Done", "Books saved.")
+        msg.showinfo("Done", "The user is added.")
     except Exception as e:
         msg.showinfo("Error", "Error:\n" + str(e))
     finally:

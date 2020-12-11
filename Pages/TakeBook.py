@@ -1,9 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from tkinter import Menu
 from CenterScreen import center_screen_geometry
-import DatabaseClss.BookDB.db_books as bdb
 
 
 def Page():
