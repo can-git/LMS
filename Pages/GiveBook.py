@@ -13,5 +13,6 @@ def Page():
                                             window_height=600))
     winGive.resizable(False, False)
     winGive.grab_set()
+
     label = ttk.Label(winGive, text="Give a book")
     label.grid(row=0, column=4, padx=10, pady=10)

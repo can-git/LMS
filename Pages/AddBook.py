@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-
+from tkinter import messagebox as msg
 import Database.BookDB.db_books as bdb
 from pubsub import pub
 
@@ -59,7 +59,15 @@ def Page():
                            'True Crime')
 
     def save_handler():
-        bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), cmb_dtype.get())
+        if txt_bname.get() and txt_aname.get() and txt_cdate.get():
+            bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), cmb_dtype.get())
+            txt_bname.delete(0, tk.END)
+            txt_aname.delete(0, tk.END)
+            txt_cdate.delete(0, tk.END)
+            cmb_dtype.set('')
+            txt_bname.focus()
+        else:
+            msg.showinfo("Error", "Fill the empty spaces")
 
     def cancel_handler():
         winAdd.destroy()

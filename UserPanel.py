@@ -1,42 +1,52 @@
 import tkinter as tk
 from pubsub import pub
-from tkinter import Menu
 from CenterScreen import center_screen_geometry
-from Pages import AddBook as AB, TakeBook as TB, GiveBook as GB
+from AdminPanel import Admin
+import Database.BookDB.db_books as bdb
+import Database.UserDB.db_user as udb
+import Database.OrderDB.db_orders as odb
 
 
-class User(tk.Toplevel):
-    def __init__(self):
+class MyApp(object):
+    def __init__(self, parent):
+        self.root = parent
+        self.root.title("LMS")
+        self.frame = tk.Frame(parent)
+        self.frame.pack()
 
-        tk.Toplevel.__init__(self)
-        self.geometry(center_screen_geometry(screen_width=self.winfo_screenwidth(),
-                                             screen_height=self.winfo_screenheight(),
-                                             window_width=800,
-                                             window_height=600))
-        self.title("LMS -- User Panel")
-        pub.subscribe(self.listener, "Open User Panel")
+        self.btn = tk.Button(self.frame, text="Admin Panel", highlightthickness=0, command=self.openAdminPanel)
+        self.btn.pack()
 
-        btn = tk.Button(self, text="Exit", command=self.onClose)
-        btn.pack()
+        pub.subscribe(self.listener, "Open Main Panel")  # Listens if this text calls from another page
+        self.verifyDatabases()
 
     # region Some Important Methods
-    def onClose(self):
-        self.destroy()
-        pub.sendMessage("Open Main Panel", arg1="data")
-
     def listener(self, arg1, arg2=None):
         self.show()
 
-    def hide(self):
-        self.withdraw()
-
-    def openFrame(self):
-        self.hide()
-        # subFrame = OtherFrame2()
+    def openAdminPanel(self):
+        root.withdraw()
+        subFrame = Admin()
 
     def show(self):
-        self.update()
-        self.deiconify()
+        root.update()
+        root.deiconify()
+
+    def verifyDatabases(self):
+        if not bdb.check_database():
+            bdb.create_database()
+        if not odb.check_database():
+            odb.create_database()
+        if not udb.check_database():
+            udb.create_database()
     # endregion
 
 
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry(center_screen_geometry(screen_width=root.winfo_screenwidth(),
+                                         screen_height=root.winfo_screenheight(),
+                                         window_width=800,
+                                         window_height=600))
+    app = MyApp(root)
+    root.mainloop()

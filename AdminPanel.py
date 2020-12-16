@@ -16,24 +16,23 @@ class Admin(tk.Toplevel):
                                              window_height=600))
         self.title("LMS -- Admin Panel")
 
+        # MENUBAR
+        self.menu_bar = Menu(self)
+        self.file_menu = Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu.add_command(label="Add Book", command=AddBookPage)
+        self.file_menu.add_command(label="Edit Book", command=EditBookPage)
+        self.file_menu.add_command(label="Add/Edit User", command=UserPage)
+        self.order_menu = Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Order", menu=self.order_menu)
+        self.order_menu.add_command(label="Taking", command=TakeBookPage)
+        self.order_menu.add_command(label="Giving", command=GiveBookPage)
+        self.exit_menu = Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Exit", menu=self.exit_menu)
+        self.exit_menu.add_command(label="Exit", command=self.onClose)
+        self.config(menu=self.menu_bar)
+
         print(bdb.list_books())
-        menu_bar = Menu(self)
-        file_menu = Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Add", command=AddBookPage)
-        file_menu.add_command(label="Edit", command=EditBookPage)
-
-        order_menu = Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="Order", menu=order_menu)
-        order_menu.add_command(label="Take", command=TakeBookPage)
-        order_menu.add_command(label="Give", command=GiveBookPage)
-
-        exit_menu = Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="Exit", menu=exit_menu)
-        exit_menu.add_command(label="Exit", command=self.onClose)
-
-        self.config(menu=menu_bar)
-
         pub.subscribe(self.listener, "Open Admin Panel")
 
     # region Some Important Methods
@@ -44,11 +43,8 @@ class Admin(tk.Toplevel):
     def listener(self, arg1, arg2=None):
         self.show()
 
-    def hide(self):
-        self.withdraw()
-
     def openFrame(self):
-        self.hide()
+        self.withdraw()
         # subFrame = OtherFrame2()
 
     def show(self):
@@ -71,5 +67,9 @@ def AddBookPage():
 
 
 def EditBookPage():
+    pass
+
+
+def UserPage():
     pass
 # endregion
