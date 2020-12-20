@@ -6,7 +6,7 @@ CHECKBOOKSTABLE = """SELECT count(name) FROM sqlite_master WHERE type='table' AN
 
 SELECTBOOKS = "SELECT * FROM Books"
 
-CREATEBOOKSTABLE = """CREATE TABLE Books(grid INTEGER PRIMARY KEY AUTOINCREMENT, bname TEXT, aname TEXT, 
+CREATEBOOKSTABLE = """CREATE TABLE Books(bid INTEGER PRIMARY KEY AUTOINCREMENT, bname TEXT, aname TEXT, 
 cdate INT, dtype TEXT, state BOOL);"""
 
 INSERTBOOKS = "INSERT INTO Books (bname, aname, cdate, dtype, state) VALUES(:bname, :aname, :cdate, :dtype, :state)"
@@ -17,10 +17,13 @@ CHECKUSERSTABLE = """SELECT count(name) FROM sqlite_master WHERE type='table' AN
 
 SELECTUSERS = "SELECT * FROM Users"
 
-CREATEUSERTABLE = """CREATE TABLE Users(grid INTEGER PRIMARY KEY AUTOINCREMENT, uname TEXT, usurname TEXT, 
-cdate INT);"""
+CREATEUSERTABLE = """CREATE TABLE Users(uid INTEGER PRIMARY KEY AUTOINCREMENT, uname TEXT, usurname TEXT, 
+phone INT, mail TEXT, cdate INT);"""
 
-INSERTUSER = "INSERT INTO Users (uname, usurname, cdate) VALUES(:uname, :usurname, :cdate)"
+INSERTUSER = "INSERT INTO Users (uname, usurname, phone, mail, cdate) VALUES(:uname, :usurname, :phone, :mail, :cdate)"
+
+SEARCHUSER = "SELECT * FROM Users WHERE uname LIKE '%'||?||'%' " \
+             "OR usurname LIKE '%'||?||'%' OR phone LIKE '%'||?||'%' OR mail LIKE '%'||?||'%'"
 # endregion
 
 # region Order
@@ -28,7 +31,7 @@ CHECKORDERTABLE = """SELECT count(name) FROM sqlite_master WHERE type='table' AN
 
 SELECTORDERS = "SELECT * FROM Orders"
 
-CREATEORDERTABLE = """CREATE TABLE Orders(grid INTEGER PRIMARY KEY AUTOINCREMENT, UID INT, BID INT, 
+CREATEORDERTABLE = """CREATE TABLE Orders(oid INTEGER PRIMARY KEY AUTOINCREMENT, UID INT, BID INT, 
 cdate INT, edate INT);"""
 
 INSERTORDER = "INSERT INTO Orders (UID, BID, cdate, edate) VALUES(:UID, :BID, :cdate, :edate)"

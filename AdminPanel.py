@@ -1,9 +1,12 @@
 import tkinter as tk
+from tkinter import scrolledtext
+from tkinter import ttk
 from pubsub import pub
 from tkinter import Menu
 from CenterScreen import center_screen_geometry
-from Pages import AddBook as AB, TakeBook as TB, GiveBook as GB
+from Pages import AddBook as AB, OrderBook as OB, UserEdit as US
 import Database.BookDB.db_books as bdb
+import Database.UserDB.db_user as udb
 
 
 class Admin(tk.Toplevel):
@@ -12,27 +15,36 @@ class Admin(tk.Toplevel):
         tk.Toplevel.__init__(self)
         self.geometry(center_screen_geometry(screen_width=self.winfo_screenwidth(),
                                              screen_height=self.winfo_screenheight(),
-                                             window_width=800,
-                                             window_height=600))
+                                             window_width=750,
+                                             window_height=400))
         self.title("LMS -- Admin Panel")
 
-        # MENUBAR
-        self.menu_bar = Menu(self)
-        self.file_menu = Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
-        self.file_menu.add_command(label="Add Book", command=AddBookPage)
-        self.file_menu.add_command(label="Edit Book", command=EditBookPage)
-        self.file_menu.add_command(label="Add/Edit User", command=UserPage)
-        self.order_menu = Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="Order", menu=self.order_menu)
-        self.order_menu.add_command(label="Taking", command=TakeBookPage)
-        self.order_menu.add_command(label="Giving", command=GiveBookPage)
-        self.exit_menu = Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="Exit", menu=self.exit_menu)
-        self.exit_menu.add_command(label="Exit", command=self.onClose)
-        self.config(menu=self.menu_bar)
+        self.button1 = tk.Button(self, text="Add Book", command=AddBookPage)
+        self.button1.grid(column=0, row=1, padx=15, pady=15)
+        self.button2 = tk.Button(self, text="Edit Book", command=EditBookPage)
+        self.button2.grid(column=0, row=2, padx=15, pady=15)
+        self.button3 = tk.Button(self, text="User Add Edit", command=UserPage)
+        self.button3.grid(column=0, row=3, padx=15, pady=15)
+        self.button4 = tk.Button(self, text="Ordering", command=OrderPage)
+        self.button4.grid(column=0, row=4, padx=15, pady=15)
+
+        self.label_ctg = tk.Label(self, text="Categories:")
+        self.label_ctg.grid(column=1, row=0, padx=2, pady=15)
+
+        self.BookTitle = ttk.Combobox(self, width=12)
+        self.BookTitle.grid(column=2, row=0, padx=2, pady=15)
+
+        self.BookSearch = tk.Entry(self, width=50)
+        self.BookSearch.grid(column=3, row=0, padx=5, pady=15)
+
+        self.btn_Search = tk.Button(self, text="Search")
+        self.btn_Search.grid(column=4, row=0, padx=5, pady=15)
+
+        self.BookList = scrolledtext.ScrolledText(self, width=70, height=20, wrap=tk.WORD)
+        self.BookList.grid(column=1, row=1, columnspan=5, rowspan=7)
 
         print(bdb.list_books())
+        print(udb.list_users())
         pub.subscribe(self.listener, "Open Admin Panel")
 
     # region Some Important Methods
@@ -54,14 +66,6 @@ class Admin(tk.Toplevel):
 
 
 # region Pages
-def TakeBookPage():
-    TB.Page()
-
-
-def GiveBookPage():
-    GB.Page()
-
-
 def AddBookPage():
     AB.Page()
 
@@ -71,5 +75,9 @@ def EditBookPage():
 
 
 def UserPage():
-    pass
+    US.Page()
+
+
+def OrderPage():
+    OB.Page()
 # endregion

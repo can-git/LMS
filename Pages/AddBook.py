@@ -4,15 +4,21 @@ from tkinter import messagebox as msg
 import Database.BookDB.db_books as bdb
 from pubsub import pub
 
+from CenterScreen import center_screen_geometry
+
 
 def Page():
     winAdd = tk.Toplevel()
     winAdd.title("Add a book")
+    winAdd.geometry(center_screen_geometry(screen_width=winAdd.winfo_screenwidth() + 100,
+                                           screen_height=winAdd.winfo_screenheight(),
+                                           window_width=330,
+                                           window_height=200))
     winAdd.resizable(False, False)
     winAdd.grab_set()
 
     container = tk.LabelFrame(winAdd)
-    container.pack(padx=30, pady=60, fill=tk.BOTH, expand=True)
+    container.pack(padx=5, pady=10, fill=tk.BOTH, expand=True)
 
     lbl_bname = ttk.Label(container, text="Title: ")
     lbl_bname.grid(column=0, row=0, padx=5, pady=5, sticky=tk.W)
@@ -76,5 +82,3 @@ def Page():
     ttk.Button(container, text="Save", command=save_handler).grid(column=1, row=4, padx=5, pady=5, sticky=tk.E)
 
     txt_bname.focus()
-
-

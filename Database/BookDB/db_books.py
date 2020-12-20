@@ -69,3 +69,21 @@ def insert_book(bname, aname, cdate, dtype):
         msg.showinfo("Error", "Error:\n" + str(e))
     finally:
         conn.close()
+
+
+def insert_book_silence(bname, aname, cdate, dtype):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.INSERTBOOKS,
+                    {"bname": bname,
+                     "aname": aname,
+                     "cdate": cdate,
+                     "dtype": dtype,
+                     "state": True
+                     })
+        conn.commit()
+    except Exception as e:
+        msg.showinfo("Error", "Filling database is not complated:\n" + str(e))
+    finally:
+        conn.close()

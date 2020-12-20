@@ -5,6 +5,8 @@ from AdminPanel import Admin
 import Database.BookDB.db_books as bdb
 import Database.UserDB.db_user as udb
 import Database.OrderDB.db_orders as odb
+from Pages import AdminEntry as AE
+from tkinter import messagebox as msg
 
 
 class MyApp(object):
@@ -35,10 +37,31 @@ class MyApp(object):
     def verifyDatabases(self):
         if not bdb.check_database():
             bdb.create_database()
+            self.fillBooks()
         if not odb.check_database():
             odb.create_database()
         if not udb.check_database():
             udb.create_database()
+            self.fillUsers()
+
+    def fillBooks(self):
+        bdb.insert_book_silence("Uygarligin Ayak Izleri", "Celil Sadik", 1940, "History")
+
+    def fillUsers(self):
+        udb.insert_user_silence("can", "yilmaz", 5073022302, "canyil97@hotmail.com", 21)
+        udb.insert_user_silence("tugce", "ddd", 5453022301, "safsafsa@hotmail.com", 12)
+        udb.insert_user_silence("atakan", "alperen", 5073024533, "asdsadsa@gmail.com", 10)
+
+    def AdminEntryPage(self):
+        AE.Page()
+
+    # def admin_handler(self):
+    #     if self.name_entry.get() == "Ati" and self.password_entry.get() == "123321":
+    #         msg.showinfo("", "Admin entry successful")
+    #
+    #     else:
+    #          msg.showerror("Error", "Wrong name or password")
+
     # endregion
 
 
