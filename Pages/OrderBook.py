@@ -61,7 +61,7 @@ def Page():
 
     ttk.Button(container, text="Search", command=searchB_handler).grid(column=2, row=0, padx=5, pady=5, sticky=tk.E)
     ttk.Button(container, text="Search", command=searchU_handler).grid(column=2, row=4, padx=5, pady=5, sticky=tk.E)
-    ttk.Button(container, text="Save", command=save_handler).grid(column=2, row=5, padx=5, pady=5, sticky=tk.E)
-    ttk.Button(container, text="Cancel", command=cancel_handler).grid(column=1, row=5, padx=5, pady=5, sticky=tk.E)
+    ttk.Button(container, text="Save", command=save_handler).grid(column=2, row=6, padx=5, pady=5, sticky=tk.E)
+    ttk.Button(container, text="Cancel", command=cancel_handler).grid(column=1, row=6, padx=5, pady=5, sticky=tk.E)
 
     txt_book.focus()

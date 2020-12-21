@@ -27,6 +27,8 @@ class Admin(tk.Toplevel):
         self.button3.grid(column=0, row=3, padx=15, pady=15)
         self.button4 = tk.Button(self, text="Ordering", command=OrderPage)
         self.button4.grid(column=0, row=4, padx=15, pady=15)
+        self.button5 = tk.Button(self, text="Main Screen", command=self.onClose)
+        self.button5.grid(column=0, row=5, padx=15, pady=15)
 
         self.label_ctg = tk.Label(self, text="Categories:")
         self.label_ctg.grid(column=1, row=0, padx=2, pady=15)

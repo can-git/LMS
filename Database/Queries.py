@@ -24,6 +24,12 @@ INSERTUSER = "INSERT INTO Users (uname, usurname, phone, mail, cdate) VALUES(:un
 
 SEARCHUSER = "SELECT * FROM Users WHERE uname LIKE '%'||?||'%' " \
              "OR usurname LIKE '%'||?||'%' OR phone LIKE '%'||?||'%' OR mail LIKE '%'||?||'%'"
+
+CHECKUSER = "SELECT count(*) FROM Users WHERE uname = ? AND usurname = ?"
+
+EDITUSER = "UPDATE Users SET uname = ?, usurname = ?, phone = ?, mail = ? WHERE uid = ?"
+
+DELETEUSER = "DELETE FROM Users WHERE uid = ?"
 # endregion
 
 # region Order

@@ -49,7 +49,7 @@ class MyApp(object):
 
     def fillUsers(self):
         udb.insert_user_silence("can", "yilmaz", 5073022302, "canyil97@hotmail.com", 21)
-        udb.insert_user_silence("tugce", "ddd", 5453022301, "safsafsa@hotmail.com", 12)
+        udb.insert_user_silence("tugce", "can", 5453022301, "safsafsa@hotmail.com", 12)
         udb.insert_user_silence("atakan", "alperen", 5073024533, "asdsadsa@gmail.com", 10)
 
     def AdminEntryPage(self):
