@@ -87,3 +87,75 @@ def insert_book_silence(bname, aname, cdate, dtype):
         msg.showinfo("Error", "Filling database is not complated:\n" + str(e))
     finally:
         conn.close()
+
+
+def search_books(word):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    list = []
+    try:
+        cur.execute(q.SEARCHBOOK, (word, word, word, word,))
+        list = cur.fetchall()
+    except Exception as e:
+        msg.showinfo("Error", "Error while searching:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()
+    return list
+
+
+def search_books2(word):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    list = []
+    try:
+        cur.execute(q.SEARCHBOOK2, (word, word, word, word,))
+        list = cur.fetchall()
+    except Exception as e:
+        msg.showinfo("Error", "Error while searching:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()
+    return list
+
+
+def delete_book(id):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.DELETEBOOK, (id,))
+        conn.commit()
+        msg.showinfo("Done", "The book is deleted.")
+    except Exception as e:
+        msg.showinfo("Error", "Error while deleting:\n" + str(e))
+        return None
+    finally:
+        conn.commit()
+        conn.close()
+
+
+def edit_book_state(state, bid):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.EDITBOOKSTATE, (state, bid))
+
+    except Exception as e:
+        msg.showinfo("Error", "Error while editing:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()
+
+
+def edit_book(bname, aname, cdate, dtype, id):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.EDITBOOK, (bname, aname, cdate, dtype, id))
+        msg.showinfo("Done", "The book is changed.")
+
+    except Exception as e:
+        msg.showinfo("Error", "Error while editing:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()

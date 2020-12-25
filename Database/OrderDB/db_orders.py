@@ -63,7 +63,57 @@ def insert_order(uid, bid, cdate, edate):
                      "edate": edate})
         conn.commit()
         msg.showinfo("Done", "Order is created.")
+        return True
     except Exception as e:
         msg.showinfo("Error", "Error:\n" + str(e))
+        return False
     finally:
+        conn.close()
+
+
+def search_orders():
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    list = []
+    try:
+        cur.execute(q.SEARCHORDER)
+        list = cur.fetchall()
+    except Exception as e:
+        msg.showinfo("Error", "Error while searching:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()
+    return list
+
+
+def get_userid_by_bookid(bid):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.GETORDERUSERIDBYBOOKID, (bid,))
+        word = cur.fetchone()
+        if word:
+            return word[0]
+        else:
+            return ""
+    except Exception as e:
+        msg.showinfo("Error", "Error while searching:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()
+
+
+def delete_order(bid):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.DELETEORDER, (bid,))
+        conn.commit()
+        msg.showinfo("Done", "The order is deleted.")
+        return True
+    except Exception as e:
+        msg.showinfo("Error", "Error while deleting:\n" + str(e))
+        return False
+    finally:
+        conn.commit()
         conn.close()

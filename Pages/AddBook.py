@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox as msg
 import Database.BookDB.db_books as bdb
 from pubsub import pub
+import DtypeDictionary as dtypeD
 
 from CenterScreen import center_screen_geometry
 
@@ -66,7 +67,7 @@ def Page():
 
     def save_handler():
         if txt_bname.get() and txt_aname.get() and txt_cdate.get():
-            bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), cmb_dtype.get())
+            bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), dtypeD.get_book.get(cmb_dtype.get()))
             txt_bname.delete(0, tk.END)
             txt_aname.delete(0, tk.END)
             txt_cdate.delete(0, tk.END)

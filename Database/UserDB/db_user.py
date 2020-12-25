@@ -90,8 +90,23 @@ def search_users(word):
     cur = conn.cursor()
     list = []
     try:
-        cur.execute(q.SEARCHUSER, (word, word, word, word,))
+        cur.execute(q.SEARCHUSERS, (word, word, word, word,))
         list = cur.fetchall()
+    except Exception as e:
+        msg.showinfo("Error", "Error while searching:\n" + str(e))
+    finally:
+        conn.commit()
+        conn.close()
+    return list
+
+
+def search_user(uid):
+    conn = sqlite3.connect(PATH)
+    cur = conn.cursor()
+    try:
+        cur.execute(q.SEARCHUSER, (uid,))
+        word = cur.fetchone()
+        return word
     except Exception as e:
         msg.showinfo("Error", "Error while searching:\n" + str(e))
     finally:
@@ -123,7 +138,7 @@ def edit_user(uname, usurname, phone, mail, id):
     conn = sqlite3.connect(PATH)
     cur = conn.cursor()
     try:
-        cur.execute(q.EDITUSER,(uname, usurname, phone, mail, id))
+        cur.execute(q.EDITUSER, (uname, usurname, phone, mail, id))
         msg.showinfo("Done", "The user is changed.")
 
     except Exception as e:
