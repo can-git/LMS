@@ -25,7 +25,7 @@ def Page():
     lbl_bname.grid(column=0, row=0, padx=5, pady=5, sticky=tk.W)
     lbl_aname = ttk.Label(container, text="Author: ")
     lbl_aname.grid(column=0, row=1, padx=5, pady=5, sticky=tk.W)
-    lbl_cdate = ttk.Label(container, text="Published Date: ")
+    lbl_cdate = ttk.Label(container, text="Published Year: ")
     lbl_cdate.grid(column=0, row=2, padx=5, pady=5, sticky=tk.W)
     lbl_dtype = ttk.Label(container, text="Document Type: ")
     lbl_dtype.grid(column=0, row=3, padx=5, pady=5, sticky=tk.W)
@@ -67,12 +67,13 @@ def Page():
 
     def save_handler():
         if txt_bname.get() and txt_aname.get() and txt_cdate.get():
-            bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), dtypeD.get_book.get(cmb_dtype.get()))
+            bdb.insert_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), dtypeD.set_book.get(cmb_dtype.get()))
             txt_bname.delete(0, tk.END)
             txt_aname.delete(0, tk.END)
             txt_cdate.delete(0, tk.END)
             cmb_dtype.set('')
             txt_bname.focus()
+            pub.sendMessage("reload_data", arg1="data")
         else:
             msg.showinfo("Error", "Fill the empty spaces")
 

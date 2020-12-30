@@ -52,11 +52,11 @@ def list_users():
     return list
 
 
-def check_user(name, surname):
+def check_user(id):
     conn = sqlite3.connect(PATH)
     cur = conn.cursor()
     try:
-        cur.execute(q.CHECKUSER, (name, surname,))
+        cur.execute(q.CHECKUSER, (id,))
         c = cur.fetchone()
         if not c == (0,):  # if there is a value
             return True
@@ -89,6 +89,7 @@ def search_users(word):
     conn = sqlite3.connect(PATH)
     cur = conn.cursor()
     list = []
+    print(word)
     try:
         cur.execute(q.SEARCHUSERS, (word, word, word, word,))
         list = cur.fetchall()

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox as msg
 from CenterScreen import center_screen_geometry
-from AdminPanel import Admin
+import Database.AdminDB.db_admin as adb
 from pubsub import pub
 
 
@@ -25,11 +25,11 @@ def Page():
     label_password = ttk.Label(winAdmin, text="Password: ")
     label_password.grid(column=0, row=1, padx=15, pady=5)
 
-    password_entry = ttk.Entry(winAdmin, width=30)
+    password_entry = ttk.Entry(winAdmin, show="*", width=30)
     password_entry.grid(column=1, row=1, padx=15, pady=15)
 
-    def admin_handler():
-        if name_entry.get() == "" and password_entry.get() == "":
+    def admin_handler(event=None):
+        if adb.search_admin(name_entry.get(), password_entry.get()):
             winAdmin.destroy()
             pub.sendMessage("Login", arg1="data")
 
@@ -43,3 +43,5 @@ def Page():
     ttk.Button(winAdmin, text="Login", command=admin_handler, width=15).grid(column=1, row=3, sticky=tk.E)
 
     name_entry.focus()
+
+    winAdmin.bind('<Return>', admin_handler)

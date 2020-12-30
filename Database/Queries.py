@@ -34,12 +34,11 @@ phone INT, mail TEXT, cdate INT);"""
 
 INSERTUSER = "INSERT INTO Users (uname, usurname, phone, mail, cdate) VALUES(:uname, :usurname, :phone, :mail, :cdate)"
 
-SEARCHUSERS = "SELECT * FROM Users WHERE uname LIKE '%'||?||'%' " \
-             "OR usurname LIKE '%'||?||'%' OR phone LIKE '%'||?||'%' OR mail LIKE '%'||?||'%'"
+SEARCHUSERS = "SELECT * FROM Users WHERE (uname LIKE '%'||?||'%' OR usurname LIKE '%'||?||'%' OR phone LIKE '%'||?||'%' OR mail LIKE '%'||?||'%')"
 
 SEARCHUSER = "SELECT * FROM Users WHERE uid = ?"
 
-CHECKUSER = "SELECT count(*) FROM Users WHERE uname = ? AND usurname = ?"
+CHECKUSER = "SELECT count(*) FROM Users WHERE uid = ?"
 
 EDITUSER = "UPDATE Users SET uname = ?, usurname = ?, phone = ?, mail = ? WHERE uid = ?"
 
@@ -61,4 +60,14 @@ SEARCHORDER = "SELECT o.oid, u.uname, u.usurname, b.bname, b.aname, o.cdate, o.e
 DELETEORDER = "DELETE FROM Orders WHERE bid = ?"
 
 GETORDERUSERIDBYBOOKID = "SELECT uid FROM Orders WHERE bid = ?"
+# endregion
+
+# region Admin
+CHECKADMINTABLE = """SELECT count(name) FROM sqlite_master WHERE type='table' AND name='Admin'"""
+
+CREATEADMINTABLE = """CREATE TABLE Admin(aid INTEGER PRIMARY KEY AUTOINCREMENT, aname TEXT, apassword TEXT);"""
+
+INSERTADMIN = "INSERT INTO Admin (aname, apassword) VALUES(:aname, :apassword)"
+
+SEARCHADMIN = "SELECT * FROM Admin WHERE aname = ? AND apassword = ?"
 # endregion

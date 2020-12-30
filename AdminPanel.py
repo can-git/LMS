@@ -8,6 +8,7 @@ from Pages import AddBook as AB, OrderBook as OB, UserEdit as US, EditBook as EB
 import Database.BookDB.db_books as bdb
 import Database.UserDB.db_user as udb
 import Database.OrderDB.db_orders as odb
+import DtypeDictionary as dtype
 
 
 class Admin(tk.Toplevel):
@@ -16,19 +17,20 @@ class Admin(tk.Toplevel):
         tk.Toplevel.__init__(self)
         self.geometry(center_screen_geometry(screen_width=self.winfo_screenwidth(),
                                              screen_height=self.winfo_screenheight(),
-                                             window_width=750,
+                                             window_width=800,
                                              window_height=400))
+        self.resizable(False, False)
         self.title("LMS -- Admin Panel")
 
-        self.button1 = tk.Button(self, text="Add Book", command=AddBookPage)
+        self.button1 = tk.Button(self, text="Add Book", command=AddBookPage, width=15)
         self.button1.grid(column=0, row=1, padx=15, pady=15)
-        self.button2 = tk.Button(self, text="Edit Book", command=EditBookPage)
+        self.button2 = tk.Button(self, text="Edit Book", command=EditBookPage, width=15)
         self.button2.grid(column=0, row=2, padx=15, pady=15)
-        self.button3 = tk.Button(self, text="User Add Edit", command=UserPage)
+        self.button3 = tk.Button(self, text="User Add Edit", command=UserPage, width=15)
         self.button3.grid(column=0, row=3, padx=15, pady=15)
-        self.button4 = tk.Button(self, text="Order", command=OrderPage)
+        self.button4 = tk.Button(self, text="Order", command=OrderPage, width=15)
         self.button4.grid(column=0, row=4, padx=15, pady=15)
-        self.button5 = tk.Button(self, text="Main Screen", command=self.onClose)
+        self.button5 = tk.Button(self, text="Main Screen", command=self.onClose, width=15)
         self.button5.grid(column=0, row=5, padx=15, pady=15)
 
         self.label_ctg = tk.Label(self, text="Categories:")
@@ -69,14 +71,17 @@ class Admin(tk.Toplevel):
         self.treeO.configure(yscrollcommand=self.vsb3.set)
 
         pub.subscribe(self.listener, "Open Admin Panel")
+        pub.subscribe(self.reload_data, "reload_data")
         self.Title.bind("<<ComboboxSelected>>", lambda _: self.change_table(self.Title.get()))
+        self.BookSearch.bind('<Return>', self.search)
 
         self.change_table("Books")
         self.Title.current(1)
+        self.BookSearch.focus()
         self.search()
 
     # region Some Important Methods
-    def search(self):
+    def search(self, event=None):
         if self.Title.get() == "Users":
             self.searchbyU(self.BookSearch.get())
         elif self.Title.get() == "Books":
@@ -87,37 +92,43 @@ class Admin(tk.Toplevel):
     def searchbyU(self, word):
         list = udb.list_users()
         self.remove_tree(self.treeU)
+        index = 0
         for i in list:
+            index = index + 1
             if word == "" or word == " ":
-                self.treeU.insert("", 'end', text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
+                self.treeU.insert("", 'end', text=index, values=(i[1], i[2], i[3], i[4], i[5]))
                 continue
             for ch in i:
                 if word in str(ch):
-                    self.treeU.insert("", 'end', text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
+                    self.treeU.insert("", 'end', text=index, values=(i[1], i[2], i[3], i[4], i[5]))
                     break
 
     def searchbyB(self, word):
         list = bdb.list_books()
         self.remove_tree(self.treeB)
+        index = 0
         for i in list:
+            index = index + 1
             if word == "" or word == " ":
-                self.treeB.insert("", 'end', text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
+                self.treeB.insert("", 'end', text=index, values=(i[1], i[2], i[3], dtype.get_book_by_id[i[4]], dtype.get_status_by_id[i[5]]))
                 continue
             for ch in i:
                 if word in str(ch):
-                    self.treeB.insert("", 'end', text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
+                    self.treeB.insert("", 'end', text=index, values=(i[1], i[2], i[3], dtype.get_book_by_id[i[4]], dtype.get_status_by_id[i[5]]))
                     break
 
     def searchbyO(self, word):
         list = odb.search_orders()
         self.remove_tree(self.treeO)
+        index = 0
         for i in list:
+            index = index + 1
             if word == "" or word == " ":
-                self.treeO.insert("", 'end', text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6]))
+                self.treeO.insert("", 'end', text=index, values=(i[1], i[2], i[3], i[4], dtype.get_month_by_id[i[5]], dtype.get_month_by_id[i[6]]))
                 continue
             for ch in i:
                 if word in str(ch):
-                    self.treeO.insert("", 'end', text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6]))
+                    self.treeO.insert("", 'end', text=index, values=(i[1], i[2], i[3], i[4], i[5], i[6]))
                     break
 
     def remove_tree(self, tree):
@@ -147,7 +158,7 @@ class Admin(tk.Toplevel):
             self.treeU.column('three', width=90, stretch=tk.NO)
             self.treeU.column('four', width=145, stretch=tk.NO)
             self.treeU.column('five', width=145, stretch=tk.NO)
-            self.treeU.heading('#0', text="ID", anchor=tk.W)
+            self.treeU.heading('#0', text="", anchor=tk.W)
             self.treeU.heading('one', text="Name", anchor=tk.W)
             self.treeU.heading('two', text="Surname", anchor=tk.W)
             self.treeU.heading('three', text="Phone", anchor=tk.W)
@@ -163,10 +174,10 @@ class Admin(tk.Toplevel):
             self.treeB.column('three', width=120, stretch=tk.NO)
             self.treeB.column('four', width=100, stretch=tk.NO)
             self.treeB.column('five', width=100, stretch=tk.NO)
-            self.treeB.heading('#0', text="ID", anchor=tk.W)
+            self.treeB.heading('#0', text="", anchor=tk.W)
             self.treeB.heading('one', text="Title", anchor=tk.W)
             self.treeB.heading('two', text="Author Name", anchor=tk.W)
-            self.treeB.heading('three', text="Created Date", anchor=tk.W)
+            self.treeB.heading('three', text="Published Date", anchor=tk.W)
             self.treeB.heading('four', text="Type", anchor=tk.W)
             self.treeB.heading('five', text="State", anchor=tk.W)
         elif c == "Orders":
@@ -180,7 +191,7 @@ class Admin(tk.Toplevel):
             self.treeO.column('four', width=120, stretch=tk.NO)
             self.treeO.column('five', width=80, stretch=tk.NO)
             self.treeO.column('six', width=80, stretch=tk.NO)
-            self.treeO.heading('#0', text="ID", anchor=tk.W)
+            self.treeO.heading('#0', text="", anchor=tk.W)
             self.treeO.heading('one', text="User Name", anchor=tk.W)
             self.treeO.heading('two', text="User Surname", anchor=tk.W)
             self.treeO.heading('three', text="Book Title", anchor=tk.W)
@@ -195,6 +206,9 @@ class Admin(tk.Toplevel):
 
     def listener(self, arg1, arg2=None):
         self.show()
+
+    def reload_data(self, arg1, arg2=None):
+        self.search()
 
     def openFrame(self):
         self.withdraw()

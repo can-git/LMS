@@ -6,6 +6,7 @@ import Database.UserDB.db_user as udb
 import Database.OrderDB.db_orders as odb
 from CenterScreen import center_screen_geometry
 import DtypeDictionary as dtypeD
+from pubsub import pub
 
 
 def Page():
@@ -20,7 +21,7 @@ def Page():
 
     booklist = []
     templist = []
-    bookindex = 0
+    bookindex = 99999
 
     container = tk.LabelFrame(winAdd)
     container.pack(padx=5, pady=10, fill=tk.BOTH, expand=True)
@@ -37,11 +38,17 @@ def Page():
     lbl_dtype = ttk.Label(container, text="Document Type: ")
     lbl_dtype.grid(column=0, row=4, padx=5, pady=5, sticky=tk.W)
 
+    def callback(index, value, op):
+        nonlocal bookindex
+        if not ename.get():
+            bookindex = 99999
+
     bname = tk.StringVar()
     aname = tk.StringVar()
     cdate = tk.IntVar()
     dtype = tk.StringVar()
     ename = tk.StringVar()
+    ename.trace_add('write', callback)
 
     # Entry widgets and Combobox
     cmb_books = ttk.Combobox(container, textvariable=ename, width=27)
@@ -78,17 +85,24 @@ def Page():
 
     # For searching the database for the specified book.
     def clear_text():
-        nonlocal cmb_dtype
+        nonlocal cmb_dtype, cmb_books
         txt_bname.delete(0, tk.END)
         txt_aname.delete(0, tk.END)
         txt_cdate.delete(0, tk.END)
         cmb_dtype.delete(0, tk.END)
 
     def clear_combo_text():
-        nonlocal booklist, templist, cmb_books
+        nonlocal booklist, templist
         booklist = []
         templist = []
         cmb_books['values'] = ['']
+
+    def clear_full():
+        clear_combo_text()
+        clear_text()
+        nonlocal cmb_dtype, cmb_books
+        cmb_books.delete(0, tk.END)
+        cmb_dtype.current(0)
 
     def fill_text(index):
         nonlocal bookindex
@@ -110,13 +124,21 @@ def Page():
     # For saving the changed properties.
     def save_handler():
         nonlocal bookindex
-        bdb.edit_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), dtypeD.get_book.get(cmb_dtype.get()), bookindex)
+        if not bookindex == 99999:
+            bdb.edit_book(txt_bname.get(), txt_aname.get(), txt_cdate.get(), dtypeD.set_book.get(cmb_dtype.get()), bookindex)
+            pub.sendMessage("reload_data", arg1="data")
+        else:
+            msg.showinfo("Error", "Empty fields !")
 
     def delete_handler():
         nonlocal bookindex
-        bdb.delete_book(bookindex)
-        clear_combo_text()
-        clear_text()
+        if not bookindex == 99999:
+            if msg.askyesno("Information", "Are you sure you want to delete the book"):
+                bdb.delete_book(bookindex)
+                clear_full()
+                pub.sendMessage("reload_data", arg1="data")
+        else:
+            msg.showinfo("Error", "Empty fields !")
 
     def cancel_handler():
         winAdd.destroy()
@@ -130,5 +152,5 @@ def Page():
     cmb_books.focus()
     cmb_books.bind("<<ComboboxSelected>>", lambda _: fill_text(cmb_books.current()))
 
-
+    search_handler()
 

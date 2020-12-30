@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from pubsub import pub
+from tkinter import messagebox as msg
 from CenterScreen import center_screen_geometry
 import Database.UserDB.db_user as udb
 
@@ -17,7 +19,7 @@ def Page():
 
     userlist=[]
     templist=[]
-    userindex = 0
+    userindex = 99999
 
     container = tk.LabelFrame(winUser)
     container.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
@@ -33,7 +35,13 @@ def Page():
     lbl_umail = ttk.Label(container, text="Mail: ")
     lbl_umail.grid(column=0, row=4, padx=5, pady=5, sticky=tk.W)
 
+    def callback(index, value, op):
+        nonlocal userindex
+        if not user.get():
+            userindex = 99999
+
     user = tk.StringVar()
+    user.trace_add('write', callback)
     uname = tk.StringVar()
     usurname = tk.StringVar()
     phone = tk.IntVar()
@@ -57,10 +65,11 @@ def Page():
         txt_phone.delete(0, tk.END)
 
     def clear_combo_text():
-        nonlocal userlist, templist, cmb_users
+        nonlocal userlist, templist, cmb_users, userindex
         userlist = []
         templist = []
-        cmb_users['values'] = ['']
+        user.set("")
+        userindex = 99999
 
     def fill_text(index):
         nonlocal userindex
@@ -73,8 +82,9 @@ def Page():
 
     def search_handler():
         nonlocal userlist, templist, cmb_users
+        w = user.get()
         clear_combo_text()
-        for i in udb.search_users(user.get()):
+        for i in udb.search_users(w):
             userlist.append(i)
             templist.append(i[1] + " " + i[2] + " " + str(i[3]))
         cmb_users['values'] = templist
@@ -84,16 +94,30 @@ def Page():
 
     def delete_handler():
         nonlocal userindex
-        udb.delete_user(userindex)
-        clear_combo_text()
-        clear_text()
+        if not userindex == 99999:
+            if msg.askyesno("Information", "Are you sure you want to delete the user"):
+                udb.delete_user(userindex)
+                clear_combo_text()
+                clear_text()
+                pub.sendMessage("reload_data", arg1="data")
+                search_handler()
+        else:
+            msg.showinfo("Error", "Empty fields !")
 
     def save_handler():
         nonlocal userindex
-        if udb.check_user(txt_uname.get(), txt_usurname.get()):
-            udb.edit_user(txt_uname.get(), txt_usurname.get(), txt_phone.get(), txt_mail.get(), userindex)
-        elif not udb.check_user(txt_uname.get(), txt_usurname.get()):
-            udb.insert_user(txt_uname.get(), txt_usurname.get(), txt_phone.get(), txt_mail.get())
+        if txt_uname.get() and txt_usurname.get() and txt_phone.get() and txt_mail.get():
+            if udb.check_user(userindex) and msg.askyesno("Information", "Are you sure you want to edit the user"):
+                udb.edit_user(txt_uname.get(), txt_usurname.get(), txt_phone.get(), txt_mail.get(), userindex)
+                pub.sendMessage("reload_data", arg1="data")
+            elif not udb.check_user(userindex) and msg.askyesno("Information", "Are you sure you want to add the user"):
+                udb.insert_user(txt_uname.get(), txt_usurname.get(), txt_phone.get(), txt_mail.get())
+                pub.sendMessage("reload_data", arg1="data")
+            clear_text()
+            clear_combo_text()
+            search_handler()
+        else:
+            msg.showinfo("Error", "Empty fields !")
 
     ttk.Button(container, text="Search", command=search_handler).grid(column=2, row=0, padx=5, pady=5, sticky=tk.E)
     ttk.Button(container, text="Cancel", command=cancel_handler).grid(column=0, row=5, padx=5, pady=5, sticky=tk.E)
@@ -102,3 +126,5 @@ def Page():
 
     cmb_users.focus()
     cmb_users.bind("<<ComboboxSelected>>", lambda _: fill_text(cmb_users.current()))
+
+    search_handler()
