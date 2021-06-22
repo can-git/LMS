@@ -1,3 +1,2 @@
 # LMS
-School Project
-Tkinter
+School Project with Tkinter
